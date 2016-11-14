@@ -1,0 +1,23 @@
+{
+  "name": "local-webpack",
+  "version": "1.0.0",
+  "description": "this is a demo for webpack.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://cnyet@github.com/cnyet/local-webpack.git"
+  },
+  "author": "yate",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cnyet/local-webpack/issues"
+  },
+  "homepage": "https://github.com/cnyet/local-webpack#readme",
+  "devDependencies": {
+    "webpack": "^1.13.3",
+    "webpack-dev-server": "^1.16.2"
+  }
+}
