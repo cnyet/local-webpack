@@ -25,7 +25,7 @@ var browser = os.platform() === "linux" ? "Google chrome" : (
     os.platform() === "darwin" ? "Google chrome" : (
         os.platform() === "win32" ? "chrome" : "firefox"
     ));
-var pkg = require("./package.json");
+ var pkg = require("./package.json");
 
 //将图片拷贝到目标目录
 gulp.task("copy:images", function (done) {
@@ -83,38 +83,37 @@ gulp.task("sprite", ["copy:images", "lessmin"], function (done) {
         .pipe(gulp.dest('dist/css'))
         .on('end', done);
 });
-
+//清除文件
 gulp.task('clean', function (done) {
     gulp.src(['dist'])
         .pipe(clean())
         .on('end', done);
 });
-
+//监听文件变化
 gulp.task('watch', function (done) {
     gulp.watch('src/**/*', ['lessmin', 'build-js', 'fileinclude'])
         .on('end', done);
 });
-
+//gulp本地服务
 gulp.task('connect', function () {
-    console.log('connect------------');
+    console.log('connect----------------------------------');
     connect.server({
         root: host.path,
         port: host.port,
         livereload: true
     });
 });
-
+//自动在浏览器中打开页面
 gulp.task('open', function (done) {
     gulp.src('')
         .pipe(gulpOpen({
             app: browser,
-            uri: 'http://localhost:3000/app'
+            uri: 'http://localhost:3000/views'
         }))
         .on('end', done);
 });
 
 var myDevConfig = Object.create(webpackConfig);
-
 var devCompiler = webpack(myDevConfig);
 
 //引用webpack对js进行操作

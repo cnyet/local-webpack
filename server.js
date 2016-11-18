@@ -1,15 +1,22 @@
-var webpack = require("webpack"),
-    WebpackDevServer = require("webpack-dev-server"),
-    config = require("./webpack-config.js");
-config.entry.app.unshift("webpack-dev-server/client?http://localhost:8090/");
-var compiler = webpack(config),
-    server  = new WebpackDevServer(compiler, {
-         publicPath: "/src/",
-         hot: true,
-         historyApiFallback: true,
-         proxy: {
-             "**": "http://localhost:8090"
-            }
-         });
+var path = require("path");
+var webpack = require("webpack");
+var webpackDevServer = require("webpack-dev-server");
+var webpackDev = require("./webpack.config.js");
 
- server.listen(8090);
+var compiler = webpack(webpackDev);
+
+//init server
+var app = new webpackDevServer(compiler, {
+    //注意此处publicPath必填
+    publicPath: webpackDev.output.publicPath,
+    //HMR配置
+    hot:true,
+    stats: { colors: true },
+    contentBase: "dist/"
+});
+
+app.listen(9390, "localhost", function (err) {
+    if (err) {
+        console.log(err);
+    }
+});
