@@ -1,22 +1,22 @@
-var path = require("path");
-var webpack = require("webpack");
-var webpackDevServer = require("webpack-dev-server");
-var webpackDev = require("./webpack.config.js");
+'use strict'
 
-var compiler = webpack(webpackDev);
-
-//init server
-var app = new webpackDevServer(compiler, {
-    //注意此处publicPath必填
-    publicPath: webpackDev.output.publicPath,
-    //HMR配置
+var webpack = require('webpack');
+var WebpackDevServer = require('webpack-dev-server');
+var config = require('./webpack.config');
+// 配置代码自动编译和热替换插件
+config.entry.unshift('webpack-dev-server/client?http://localhost:9090', "webpack/hot/dev-server");
+config.plugins.push(new webpack.HotModuleReplacementPlugin());
+// 这里配置：请求http://localhost:9090/index.php，
+// 相当于通过本地node服务代理请求到了http://testapi.uhouzz.com/index.php
+var proxy = [{
+    path: "index.html",
+    host: "localhost"
+}];
+//启动服务
+var app = new WebpackDevServer(webpack(config), {
+    publicPath: config.output.publicPath,
     hot:true,
-    stats: { colors: true },
-    contentBase: "dist/"
+    historyApiFallback: true,
+    proxy:proxy
 });
-
-app.listen(9390, "localhost", function (err) {
-    if (err) {
-        console.log(err);
-    }
-});
+app.listen(9090);
