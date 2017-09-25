@@ -1,43 +1,56 @@
-var webpack = require('webpack');
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
-var path = require("path");
-
+var webpack = require("webpack");
+var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin"); //将公共文件合并成一个
+var path = require("path"); //引入nodejs再带的path模块，用于处理目录的对象
+var HtmlWebpackPlugin = require("html-webpack-plugin");     //自动生成生成一个HTML文件
+var ExtractTextPlugin = require("extract-text-webpack-plugin");     //将入口引用的 *.css移动到分离的CSS文件
+var CleanWebpackPlugin = require('clean-webpack-plugin');       //清理文件
+var ManifestPlugin = require('webpack-manifest-plugin');        //保留所有模块的映射关系的详细要点
+var UglifyJSPlugin = require('uglifyjs-webpack-plugin');        //删除未引入的代码
 
 module.exports = {
-    //插件项
-    plugins: [
-        //提公用js到common.js文件中
-        new webpack.optimize.CommonsChunkPlugin('common.js'),
-        //将样式统一发布到style.css中
-        new ExtractTextPlugin("style.css", {
-            allChunks: true,
-            disable: false
-        }),
-        //使用ProvidePlugin加载使用频率高的模块
-        new webpack.ProvidePlugin({
-            $: "webpack-zepto"
-        })
-    ],
-    //页面入口文件配置
-    entry: ['./src/js/main.js'],
-    //入口文件输出配置
-    output: {
-        path: __dirname +'/dist/',
-        filename: '[name].js'
+    //webpack入口文件
+    entry: {
+        app: "./assets/scripts/main.js",
+        // print: "./assets/scripts/greeter.js"        
     },
+    devtool: 'inline-source-map',       //编译后的代码映射回原始源代码
+    //实时重新加载根目录
+    devServer: {
+        contentBase: path.resolve(__dirname, "dist"),
+        compress: true,
+        port: 8080         
+    },    
+    //打包输出文件配置
+    output: {
+        path: path.resolve(__dirname, "dist"),
+        filename: "[name].[chunkhash].js",
+        chunkFilename: '[name].bundle.js',
+        publicPath: '/'
+    },
+    //loader 用于对模块的源代码进行转换
     module: {
-        //加载器配置
-        loaders: [
-            { test: /\.css$/, loader: 'style-loader!css-loader' },
-            { test: /\.scss$/, loader: 'style!css!sass?sourceMap'},
-            { test: /\.(png|jpg)$/, loader: 'url-loader?limit=8192'}
+        //当遇到在require()/import加载的文件时，打包之前先使用对应的loader转换一下
+        rules: [
+            {test: /\.css$/, use: ExtractTextPlugin.extract({
+                fallback: "style-loader",
+                use: "css-loader"
+            })},
+            {test: /\.(png|svg|jpg|gif)$/, use: ['file-loader']},
+            {test: /\.(woff|woff2|eot|ttf|otf)$/, use: ['file-loader']}
         ]
     },
-    //其它解决方案配置
-    resolve: {
-        extensions: ['', '.js', '.json', '.scss'],
-        alias: {
-            filter: path.join(__dirname, 'src/filters')
-        }
-    }
-};
+    //解决loader无法实现的事
+    plugins: [
+        //将公共代码抽离出来合并为一个文件
+        // new CommonsChunkPlugin({
+        //      name: 'common' // 指定公共 bundle 的名称。
+        // }),
+        new HtmlWebpackPlugin({
+            title: '默认首页'
+        }),
+        new ExtractTextPlugin("styles.css"),
+        new CleanWebpackPlugin(['dist']),
+        new ManifestPlugin(),
+        // new UglifyJSPlugin()
+    ]
+}
