@@ -1,14 +1,14 @@
 var webpack = require("webpack");
-var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin"); //将公共文件合并成一个
-var path = require("path"); //引入nodejs再带的path模块，用于处理目录的对象
-var HtmlWebpackPlugin = require("html-webpack-plugin");     //自动生成生成一个HTML文件
-var ExtractTextPlugin = require("extract-text-webpack-plugin");     //将入口引用的 *.css移动到分离的CSS文件
-var CleanWebpackPlugin = require('clean-webpack-plugin');       //清理文件
-var ManifestPlugin = require('webpack-manifest-plugin');        //保留所有模块的映射关系的详细要点
-var UglifyJSPlugin = require('uglifyjs-webpack-plugin');        //删除未引入的代码
+var path = require("path");                                                      //引入nodejs再带的path模块，用于处理目录的对象
+var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");     //将模块中公共部分抽离出来生成单独的文件
+var HtmlWebpackPlugin = require("html-webpack-plugin");                          //生成HTML文件
+var ExtractTextPlugin = require("extract-text-webpack-plugin");     //将js中引用的css文件分离出单个CSS文件
+var CleanWebpackPlugin = require('clean-webpack-plugin');           //清理文件
+var ManifestPlugin = require('webpack-manifest-plugin');            //保留所有模块的映射关系的详细要点
+var UglifyJSPlugin = require('uglifyjs-webpack-plugin');            //删除未引入的代码
 
 module.exports = {
-    //webpack入口文件
+    //配置入口文件，多个入口文件
     entry: {
         app: "./assets/scripts/main.js",
         // print: "./assets/scripts/greeter.js"        
