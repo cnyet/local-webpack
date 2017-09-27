@@ -8,24 +8,16 @@ var ManifestPlugin = require('webpack-manifest-plugin');            //保留所�
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');            //删除未引入的代码
 
 module.exports = {
-    //配置入口文件，多个入口文件
+    //配置入口文件，有多个入口文件就写多个
     entry: {
-        app: "./assets/scripts/main.js",
-        // print: "./assets/scripts/greeter.js"        
-    },
-    devtool: 'inline-source-map',       //编译后的代码映射回原始源代码
-    //实时重新加载根目录
-    devServer: {
-        contentBase: path.resolve(__dirname, "dist"),
-        compress: true,
-        port: 8080         
+        index: "./src/scripts/page/index.js"
     },    
     //打包输出文件配置
     output: {
-        path: path.resolve(__dirname, "dist"),
-        filename: "[name].[chunkhash].js",
-        chunkFilename: '[name].bundle.js',
-        publicPath: '/'
+        path: path.resolve(__dirname, "dist"),          //输出文件目录
+        filename: "js/[name].[chunkhash].js",           //输出文件名定义,并包含每个chunk内容的hash
+        chunkFilename: '[name].bundle.js',              //设置chunk后的文件名
+        publicPath: '/dist/'                            //输出解析文件的目录,设置服务器上的资源根目录
     },
     //loader 用于对模块的源代码进行转换
     module: {
@@ -35,6 +27,12 @@ module.exports = {
                 fallback: "style-loader",
                 use: "css-loader"
             })},
+            {
+                test: /\.less$/,
+                use: [{loader: "style-loader" },
+                { loader: "css-loader"}, 
+                { loader: "less-loader" }]
+            },
             {test: /\.(png|svg|jpg|gif)$/, use: ['file-loader']},
             {test: /\.(woff|woff2|eot|ttf|otf)$/, use: ['file-loader']}
         ]
@@ -42,15 +40,46 @@ module.exports = {
     //解决loader无法实现的事
     plugins: [
         //将公共代码抽离出来合并为一个文件
-        // new CommonsChunkPlugin({
-        //      name: 'common' // 指定公共 bundle 的名称。
-        // }),
+        new CommonsChunkPlugin({           
+            name: 'vendors', // 将公共模块提取，生成名为`vendors`的chunk
+            chunks: ['index','home','about'], //提取哪些模块共有的部分
+            minChunks: 3 // 提取至少3个模块共有的部分
+        }),        
+        //单独使用link标签加载css并设置路径，相对于output配置中的publickPath
+        new ExtractTextPlugin("css/[name].css"),
+        //设置页面上的公共信息，有几个写几个
         new HtmlWebpackPlugin({
-            title: '默认首页'
+            title: '默认首页',
+            favicon: '',                        //favicon路径，通过webpack引入同时可以生成hash值
+            filename: './view/index.html',      //生成的html存放路径，相对于path
+            template: './src/view/index.html',  //html模板路径
+            inject: 'body',                     //js插入的位置，true/'head'/'body'/false
+            hash: true,                         //为静态资源生成hash值
+            chunks: ['vendors', 'index'],       //需要引入的chunk，不配置就会引入所有页面的资源
+            minify: {                           //压缩HTML文件    
+                removeComments: true,           //移除HTML中的注释
+                collapseWhitespace: false       //删除空白符与换行符
+            }
         }),
-        new ExtractTextPlugin("styles.css"),
+        //每次构建钱先清除改目录下所有文件
         new CleanWebpackPlugin(['dist']),
-        new ManifestPlugin(),
+        //生成映射关系的依赖图
+        new ManifestPlugin({
+            fileName: "manifest/manifest.json"
+        }),
         // new UglifyJSPlugin()
-    ]
+    ],
+    //编译后的代码映射回原始源代码
+    devtool: 'inline-source-map',       
+    //实时重新加载根目录
+    devServer: {        
+        contentBase: path.resolve(__dirname, "dist"),   //告诉服务器从哪里提供内容,只有在你想要提供静态文件时才需要
+        publicPath: "/dist/view",
+        openPage: 'index.html',                    //默认打开的页面
+        compress: true,                                 //一切服务都启用gzip 压缩
+        host: 'localhost',                              //设置访问域名
+        port: 9000,                                     //服务端口号      
+        inline: true,                          //可以监控js变化，一段处理实时重载的脚本被插入到你的包(bundle)，并且构建消息将会出现在浏览器控制台
+        hot: true,                                      //热启动,实时刷新
+    }
 }
