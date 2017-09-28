@@ -13,11 +13,11 @@ module.exports = {
         index: "./src/scripts/page/index.js"
     },    
     //打包输出文件配置
-    output: {
+    output: { 
         path: path.resolve(__dirname, "dist"),          //输出文件目录
         filename: "js/[name].[chunkhash].js",           //输出文件名定义,并包含每个chunk内容的hash
         chunkFilename: '[name].bundle.js',              //设置chunk后的文件名
-        publicPath: '/dist/'                            //输出解析文件的目录,设置服务器上的资源根目录
+        //publicPath: '/dist/'                            //输出解析文件的目录,设置服务器上的资源根目录
     },
     //loader 用于对模块的源代码进行转换
     module: {
@@ -51,8 +51,8 @@ module.exports = {
         new HtmlWebpackPlugin({
             title: '默认首页',
             favicon: '',                        //favicon路径，通过webpack引入同时可以生成hash值
-            filename: './view/index.html',      //生成的html存放路径，相对于path
-            template: './src/view/index.html',  //html模板路径
+            filename: 'view/index.html',      //生成的html存放路径，相对于path
+            template: 'src/view/index.html',  //html模板路径
             inject: 'body',                     //js插入的位置，true/'head'/'body'/false
             hash: true,                         //为静态资源生成hash值
             chunks: ['vendors', 'index'],       //需要引入的chunk，不配置就会引入所有页面的资源
@@ -73,12 +73,11 @@ module.exports = {
     devtool: 'inline-source-map',       
     //实时重新加载根目录
     devServer: {        
-        contentBase: path.resolve(__dirname, "dist"),   //告诉服务器从哪里提供内容,只有在你想要提供静态文件时才需要
-        publicPath: "/dist/view",
+        contentBase: path.resolve(__dirname, "dist"),   //静态文件的根目录
+        publicPath: "/view/",                       //此路径下的打包文件可在浏览器中访问
         openPage: 'index.html',                    //默认打开的页面
-        compress: true,                                 //一切服务都启用gzip 压缩
-        host: 'localhost',                              //设置访问域名
-        port: 9000,                                     //服务端口号      
+        compress: true,                                //一切服务都启用gzip 压缩
+        port: 3000,                                     //服务端口号      
         inline: true,                          //可以监控js变化，一段处理实时重载的脚本被插入到你的包(bundle)，并且构建消息将会出现在浏览器控制台
         hot: true,                                      //热启动,实时刷新
     }
