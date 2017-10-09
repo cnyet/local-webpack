@@ -1,3 +1,5 @@
-.wrap{
-	color: red;
-}
+@import url("../../../bower_components/bootstrap/dist/css/bootstrap.min.css");
+@import url("../../../bower_components/components-font-awesome/css/font-awesome.min.css");
+@import url("../common/reset.less");
+@import url("../common/common.less");
+

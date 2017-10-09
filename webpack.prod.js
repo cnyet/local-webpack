@@ -1,14 +1,15 @@
 /**
- * 开发环境的打包配置
+ * 生产环境的的打包配置 *
  */
-var webpack = require("webpack");
-var path = require("path");                                                      //引入nodejs再带的path模块，用于处理目录的对象
-var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");     //将模块中公共部分抽离出来生成单独的文件
-var HtmlWebpackPlugin = require("html-webpack-plugin");                          //生成HTML文件
-var ExtractTextPlugin = require("extract-text-webpack-plugin");     //将js中引用的css文件分离出单个CSS文件
-var CleanWebpackPlugin = require('clean-webpack-plugin');           //清理文件
-var ManifestPlugin = require('webpack-manifest-plugin');            //保留所有模块的映射关系的详细要点
-var UglifyJSPlugin = require('uglifyjs-webpack-plugin');            //能够删除未引用代码压缩js插件
+var webpack = require("webpack"),                                               //webpack基础库
+    CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin"),    //将模块中公共部分抽离出来生成单独的文件
+    path = require("path"),                                                     //引入nodejs再带的path模块，用于处理目录的对象
+    CleanWebpackPlugin = require('clean-webpack-plugin'),                       //清理文件
+    ExtractTextPlugin = require("extract-text-webpack-plugin"),     //将js中引用的css文件分离出单个CSS文件
+    HtmlWebpackPlugin = require("html-webpack-plugin"),                          //生成HTML文件    
+    UglifyJSPlugin = require('uglifyjs-webpack-plugin');                           //压缩js文件
+    //获取到js文件所在的根目录，process.cwd()：当前工作目录；path.resolve:相当于不断的调用系统的cd命令
+var srcDir = path.resolve(process.cwd(), "src");     
 
 module.exports = {
     //配置入口文件，有多个入口文件就写多个
@@ -20,9 +21,9 @@ module.exports = {
     //打包输出文件配置
     output: { 
         path: path.resolve(__dirname, "dist"),          //输出文件目录
-        filename: "js/[name].js",                       //输出文件名定义
+        filename: "js/[name].[chunkhash].js",                       //输出文件名定义
         chunkFilename: '[name].bundle.js',              //设置非入口文件chunk的文件名
-        publicPath: '/'                                 //指定在浏览器中所引用的目录,设置服务器上的资源根目录
+        publicPath: '/'                             //指定在浏览器中所引用的目录,设置服务器上的资源根目录
     },
     //loader 用于对模块的源代码进行转换
     module: {        
@@ -39,7 +40,7 @@ module.exports = {
                 { loader: "less-loader" }]
             },
             {test: /\.(png|svg|jpg|gif)$/, use: ['file-loader']},
-            {test: /\.(woff|woff2|eot|ttf|otf|svg)$/, use: ['file-loader?name=./fonts/[name].[ext]']}
+            {test: /\.(woff|woff2|eot|ttf|otf)$/, use: ['file-loader']}
         ]
     },
     //解决loader无法实现的事
@@ -86,25 +87,8 @@ module.exports = {
         }),
         //每次构建钱先清除改目录下所有文件
         new CleanWebpackPlugin(['dist']),
-        //生成映射关系的依赖图
-        new ManifestPlugin({
-            fileName: "manifest/manifest.json"
-        }),
-        new webpack.HotModuleReplacementPlugin(),  //启用模块热替换
-        new UglifyJSPlugin({
-            compress: false,    //不要压缩
-            warnings: true      //控制台显示信息
-        })
+        new UglifyJSPlugin()
     ],
-    //编译后的代码映射回原始源代码
-    devtool: 'inline-source-map',       
-    //实时重新加载根目录
-    devServer: {        
-        contentBase: "./",   //静态文件的根目录        
-        openPage: 'views/index.html',                    //默认打开的页面
-        compress: true,                                //一切服务都启用gzip 压缩
-        port: 3000,                                     //服务端口号      
-        inline: true,                          //可以监控js变化，一段处理实时重载的脚本被插入到你的包(bundle)，并且构建消息将会出现在浏览器控制台
-        historyApiFallback: true,               //当使用 HTML5 History API 时，任意的 404 响应都可能需要被替代为 index.html
-    }
+     //编译后的代码映射回原始源代码
+    devtool: 'cheap-module-source-map',   
 }
