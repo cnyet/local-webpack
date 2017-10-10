@@ -4,7 +4,6 @@
   "description": "this is a demo for webpack.",
   "main": "index.js",
   "scripts": {
-    "test": "node test.js",
     "start": "webpack --config webpack.config.js",
     "dash": "webpack-dashboard -- node webpack.config.js",
     "dev": "webpack-dev-server --open",
@@ -42,5 +41,8 @@
     "webpack-manifest-plugin": "^1.3.2",
     "webpack-merge": "^4.1.0",
     "xml-loader": "^1.2.1"
+  },
+  "dependencies": {
+    "yargs": "^9.0.1"
   }
 }

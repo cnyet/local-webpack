@@ -87,7 +87,18 @@ module.exports = {
         }),
         //每次构建钱先清除改目录下所有文件
         new CleanWebpackPlugin(['dist']),
-        new UglifyJSPlugin()
+        new UglifyJSPlugin({
+            uglifyOptions: {
+              ie8: false,
+              ecma: 8,
+              output: {
+                comments: false,
+                beautify: false,
+              },
+              compress: false,
+              warnings: false
+            }
+        })
     ],
      //编译后的代码映射回原始源代码
     devtool: 'cheap-module-source-map',   
