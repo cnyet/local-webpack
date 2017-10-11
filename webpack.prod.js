@@ -45,6 +45,8 @@ module.exports = {
     },
     //解决loader无法实现的事
     plugins: [
+        //每次构建钱先清除改目录下所有文件
+        new CleanWebpackPlugin(['dist']),
         //自动加载模块，而不必到处 import 或 require
         new webpack.ProvidePlugin({
             $: 'jquery',
@@ -84,9 +86,7 @@ module.exports = {
                 removeComments: true,           //移除HTML中的注释
                 collapseWhitespace: false       //删除空白符与换行符
             }
-        }),
-        //每次构建钱先清除改目录下所有文件
-        new CleanWebpackPlugin(['dist']),
+        }),        
         new UglifyJSPlugin({
             uglifyOptions: {
               ie8: false,
