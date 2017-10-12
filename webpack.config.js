@@ -6,11 +6,11 @@ var ExtractTextPlugin = require("extract-text-webpack-plugin");     //将js中�
 var CleanWebpackPlugin = require('clean-webpack-plugin');           //清理文件
 var ManifestPlugin = require('webpack-manifest-plugin');            //保留所有模块的映射关系的详细要点
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin');            //能够删除未引用代码压缩js插件
-// var postcssSprites = require('postcss-sprites');                //合并图片生产雪碧图
-// var sprites = postcssSprites.default;
-// var precss = require('precss');                     //PostCSS插件中的预处理插件包
-// var assets = require('postcss-assets');             //用来处理图片和 SVG,图片转换成 Base64 编码的 data url 的格式
-// var autoprefixer = require('autoprefixer');         //增加浏览器相关的声明前缀
+var postcssSprites = require('postcss-sprites');                //合并图片生产雪碧图
+var sprites = postcssSprites.default;
+var precss = require('precss');                     //PostCSS插件中的预处理插件包
+var assets = require('postcss-assets');             //用来处理图片和 SVG,图片转换成 Base64 编码的 data url 的格式
+var autoprefixer = require('autoprefixer');         //增加浏览器相关的声明前缀
 var args = require('yargs').argv;                      //给程序传递参数
 var isProd = Boolean(process.env.NODE_ENV === 'production');             //执行命令是否包含生产环境的字段
 var isDev = Boolean(process.env.NODE_ENV === 'development');
@@ -20,12 +20,10 @@ var entryObj = {
     home: "./src/modules/home/home.js",
     about: "./src/modules/about/about.js",
     common: [       
-        "./src/statics/styles/common.less" 
-        // 'bootstrap/dist/js/bootstrap.min.js',
-        // 'bootstrap/dist/css/bootstrap.min.css',
-        // 'font-awesome/css/font-awesome.min.css'
+        "./src/statics/styles/ui.css" 
     ]
 };
+console.log(process.env.NODE_ENV);
 var pluginsArr = [
     //每次构建钱先清除改目录下所有文件
     new CleanWebpackPlugin(['dist']),
@@ -43,10 +41,22 @@ var pluginsArr = [
         name: 'common', // 将公共模块提取，生成名为`common`的chunk
         filename: isProd ? 'assets/common/[name].[hash].js' : 'assets/common/[name].js',
         chunks: ['index','home', 'about'], //提取哪些模块共有的部分
-        minChunks: Infinity // 提取至少3个模块共有的部分
+        //为了防止重复可以将这些公共模块移入父 chunk，减少总体的大小，但会对首次加载时间产生不良影响
+        minChunks: function(module, count){            
+            if(module.resource && (/^.*\.(css|scss|less)$/).test(module.resource)) {
+              return false;
+            }
+            return module.context && module.context.indexOf("node_modules") !== -1;
+        }
     }),
     //提取css文件，单独使用link标签加载css并设置路径，相对于output配置中的publickPath
-    new ExtractTextPlugin(isProd ? '[name]/[name].[hash].css' : '[name]/[name].css'),
+    new ExtractTextPlugin({
+        filename: (getPath) => {            
+            return getPath('[name]/[name].css').replace('common', 'assets/common');
+            // isProd ? '[name]/[name].[hash].css' : '[name]/[name].css'
+        },
+        allChunks: true
+    }),
     //启用模块热替换
     new webpack.HotModuleReplacementPlugin(),
     //要设定的环境变量名
@@ -132,33 +142,43 @@ module.exports = {
         path: path.resolve(__dirname, "dist"),          //输出文件目录
         filename: "[name]/[name].js",                       //输出文件名定义
         chunkFilename: '[name]/[name].bundle.js',              //设置非入口文件chunk的文件名
-        publicPath: ''                                 //指定在浏览器中所引用的目录,设置服务器上的资源根目录
+        publicPath: '/'                                 //指定在浏览器中所引用的目录,设置服务器上的资源根目录
     },
     //loader用于对模块的源代码进行转换
-    module: {        
+    module: {       
         //当遇到在require()/import加载的文件时，打包之前先使用对应的loader转换一下
         rules: [
-            {
+            {                
+                test: /\.js$/,
+                exclude: /node_modules/,
+                loader: "eslint-loader",
+                options: {
+                    // fix: true,
+                    emitError: true,  
+                }
+            }, {
                 test: /\.css$/, 
                 use: ExtractTextPlugin.extract({    
-                    fallback: "style-loader",                
-                    use: "css-loader",
-                    allChunks: true
+                    fallback: "style-loader",               
+                    use: ["css-loader"]                   
                 }),
-                exclude: /node_modules|bootstrap/,             //排除文件
             }, {
                 test: /\.less$/,
-                use: [{loader: "style-loader" },
+                use: [
+                {loader: "style-loader" },
                 { loader: "css-loader"}, 
                 { loader: "less-loader" }]
-            },
-            {test: /\.(png|jpg|gif)$/, use: ['file-loader?limit=8192&name=./assets/images/[name].[ext]']},
-            {test: /\.(woff|woff2|eot|ttf|otf|svg)$/, use: ['file-loader?name=./assets/fonts/[name].[ext]']}
-        ],
-        //postcss把 CSS 代码解析成抽象语法树结构，再交由插件来进行处理
-        // postcss: function () {
-        //    return [precss];
-        //  }
+            }, {
+                test: /\.(png|jpg|gif)$/, 
+                use: ['file-loader?limit=8192&name=assets/images/[name].[ext]']
+            }, {
+                test: /\.(woff|woff2|eot|ttf|otf|svg)$/, 
+                use: ['file-loader?name=assets/fonts/[name].[ext]']
+            }, {
+                test: /\.html$/,
+                use: "html-withimg-loader"
+            }
+        ]
     },
     //设置模块如何被解析
     resolve: {
@@ -175,7 +195,8 @@ module.exports = {
         contentBase: "./",   //静态文件的根目录        
         openPage: 'index.html',                    //默认打开的页面
         compress: true,                                //一切服务都启用gzip 压缩
-        port: 3000,                                     //服务端口号      
+        port: 3000,                                     //服务端口号     
+        noInfo: true, 
         inline: true,                          //可以监控js变化，一段处理实时重载的脚本被插入到你的包(bundle)，并且构建消息将会出现在浏览器控制台
         historyApiFallback: true,               //当使用 HTML5 History API 时，任意的 404 响应都可能需要被替代为 index.html
     }

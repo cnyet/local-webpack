@@ -4,9 +4,9 @@
   "description": "this is a demo for webpack.",
   "main": "index.js",
   "scripts": {
-    "start": "set NODE_ENV=development && webpack-dev-server --open",
+    "start": "set NODE_ENV=development && webpack-dev-server --open --progress",
     "dash": "webpack-dashboard -- node webpack.config.js",
-    "dev": "webpack --config webpack.config.js",
+    "dev": "webpack --config webpack.config.js --progress",
     "build": "set NODE_ENV=production && webpack --progress"
   },
   "repository": {
@@ -20,18 +20,30 @@
   },
   "homepage": "https://github.com/cnyet/webpack-build#readme",
   "devDependencies": {
+    "autoprefixer": "^7.1.5",
     "clean-webpack-plugin": "^0.1.16",
     "css-loader": "^0.28.7",
     "encodeurl": "^1.0.1",
+    "eslint": "^4.8.0",
+    "eslint-config-standard": "^10.2.1",
+    "eslint-loader": "^1.9.0",
+    "eslint-plugin-import": "^2.7.0",
+    "eslint-plugin-node": "^5.2.0",
+    "eslint-plugin-promise": "^3.5.0",
+    "eslint-plugin-standard": "^3.0.1",
     "express": "^4.15.5",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
     "html-webpack-plugin": "^2.30.1",
+    "html-withimg-loader": "^0.1.16",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
     "lodash": "^4.17.4",
     "merge-descriptors": "^1.0.1",
+    "postcss-assets": "^5.0.0",
     "postcss-loader": "^2.0.7",
+    "postcss-sprites": "^4.2.1",
+    "precss": "^2.0.0",
     "style-loader": "^0.18.2",
     "uglifyjs-webpack-plugin": "^0.4.6",
     "webpack": "^3.6.0",
@@ -47,6 +59,7 @@
     "bootstrap": "^3.3.7",
     "font-awesome": "^4.7.0",
     "jquery": "^3.2.1",
-    "normalize.css": "^7.0.0"
+    "normalize.css": "^7.0.0",
+    "yarn": "^1.2.0"
   }
 }
