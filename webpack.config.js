@@ -12,8 +12,8 @@ var precss = require('precss');                     //PostCSS插件中的预处�
 var assets = require('postcss-assets');             //用来处理图片和 SVG,图片转换成 Base64 编码的 data url 的格式
 var autoprefixer = require('autoprefixer');         //增加浏览器相关的声明前缀
 var args = require('yargs').argv;                      //给程序传递参数
-var isProd = Boolean(process.env.NODE_ENV === 'production');             //执行命令是否包含生产环境的字段
-var isDev = Boolean(process.env.NODE_ENV === 'development');
+var isProd = Boolean(process.env.NODE_ENV === "production ");             //执行命令是否包含生产环境的字段
+var isDev = Boolean(process.env.NODE_ENV === "development ");
 var devTool = 'inline-cheap-module-source-map';
 var entryObj = {
     index: "./src/modules/index/index.js",
@@ -23,18 +23,14 @@ var entryObj = {
         "./src/statics/styles/ui.css" 
     ]
 };
-console.log(process.env.NODE_ENV);
 var pluginsArr = [
     //每次构建钱先清除改目录下所有文件
     new CleanWebpackPlugin(['dist']),
     //自动加载模块，而不必到处 import 或 require
     new webpack.ProvidePlugin({
         $: 'jquery',
-        jQuery: 'jquery'
-    }),
-    //在编译时可以配置的全局常量
-    new webpack.DefinePlugin({
-        PROD: isProd
+        jQuery: 'jquery',
+        _: "lodash"
     }),
     //将公共代码抽离出来合并为一个单独文件
     new webpack.optimize.CommonsChunkPlugin({
@@ -59,10 +55,9 @@ var pluginsArr = [
     }),
     //启用模块热替换
     new webpack.HotModuleReplacementPlugin(),
-    //要设定的环境变量名
-    new webpack.EnvironmentPlugin({
-        NODE_ENV: 'development', // 除非有定义 process.env.NODE_ENV，否则就使用 'development'
-        DEBUG: false
+    //在编译时配置的全局常量
+    new webpack.DefinePlugin({
+        NODE_ENV: JSON.stringify('development')
     })
 ];
 //设置页面上的公共信息，有几个写几个
@@ -131,9 +126,6 @@ if (isProd) {
     );
     devTool = "inline-source-map";
 }
-if (process.env.DEBUG) {
-    console.log('--------------------Debug--------------------');
-}
 module.exports = {
     //配置入口文件
     entry: entryObj,    
@@ -153,15 +145,38 @@ module.exports = {
                 exclude: /node_modules/,
                 loader: "eslint-loader",
                 options: {
-                    // fix: true,
+                    fix: true,
                     emitError: true,  
                 }
             }, {
                 test: /\.css$/, 
-                use: ExtractTextPlugin.extract({    
-                    fallback: "style-loader",               
-                    use: ["css-loader"]                   
+                include: [
+                    path.resolve(__dirname, "src/statics/styles/")
+                ],                    
+                use: ExtractTextPlugin.extract({   
+                    use: ["css-loader"]                     
                 }),
+            }, {
+                test: /\.css$/,   
+                exclude: [
+                    path.resolve(__dirname, "src/statics/styles/"),
+                ],                  
+                use: ExtractTextPlugin.extract({    
+                    fallback: "style-loader",  
+                    use: [
+                        {loader: 'css-loader', options: { importLoaders: 1 }},
+                        {loader: 'postcss-loader',
+                            options:{
+                                plugins: [
+                                    require('postcss-import')(),
+                                    require('postcss-assets')(),
+                                    require('autoprefixer')(),
+                                    require('cssnano')()
+                                ]
+                            }                      
+                        }
+                    ]             
+                })
             }, {
                 test: /\.less$/,
                 use: [
