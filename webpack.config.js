@@ -12,8 +12,8 @@ var precss = require('precss');                     //PostCSS插件中的预处�
 var assets = require('postcss-assets');             //用来处理图片和 SVG,图片转换成 Base64 编码的 data url 的格式
 var autoprefixer = require('autoprefixer');         //增加浏览器相关的声明前缀
 var args = require('yargs').argv;                      //给程序传递参数
-var isProd = Boolean(process.env.NODE_ENV === "production ");             //执行命令是否包含生产环境的字段
-var isDev = Boolean(process.env.NODE_ENV === "development ");
+var isProd = Boolean(process.env.NODE_ENV === "production");             //执行命令是否包含生产环境的字段
+var isDev = Boolean(process.env.NODE_ENV === "development");
 var devTool = 'inline-cheap-module-source-map';
 var entryObj = {
     index: "./src/modules/index/index.js",
