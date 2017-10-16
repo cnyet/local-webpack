@@ -8,6 +8,6 @@ module.exports =  ({ file, options, env }) => ({
     //添加浏览器前缀
     'autoprefixer': env == 'development' ? options.autoprefixer : false,
     //压缩和优化样式表的功能
-    'cssnano': env === 'production' ? options.cssnano : false
+    'cssnano': env === 'development' ? options.cssnano : false
   }
 });

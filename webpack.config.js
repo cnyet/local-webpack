@@ -1,4 +1,6 @@
 var webpack = require("webpack");
+var ejs = require("ejs");
+var util = require('util');                                 //nodejs的核心模块，提供常用函数的集合
 var path = require("path");                                                     //引入nodejs再带的path模块，用于处理目录的对象
 var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");     //将模块中公共部分抽离出来生成单独的文件
 var HtmlWebpackPlugin = require("html-webpack-plugin");                          //生成HTML文件
@@ -23,6 +25,12 @@ var entryObj = {
         "./src/statics/styles/ui.css" 
     ]
 };
+//所有页面列表
+var pageArr = [
+    "index",
+    "home",
+    "about"
+];
 var pluginsArr = [
     //每次构建钱先清除改目录下所有文件
     new CleanWebpackPlugin(['dist']),
@@ -45,14 +53,6 @@ var pluginsArr = [
             return module.context && module.context.indexOf("node_modules") !== -1;
         }
     }),
-    //提取css文件，单独使用link标签加载css并设置路径，相对于output配置中的publickPath
-    new ExtractTextPlugin({
-        filename: (getPath) => {            
-            return getPath('[name]/[name].css').replace('common', 'assets/common');
-            // isProd ? '[name]/[name].[hash].css' : '[name]/[name].css'
-        },
-        allChunks: true
-    }),
     //启用模块热替换
     new webpack.HotModuleReplacementPlugin(),
     //在编译时配置的全局常量
@@ -60,48 +60,34 @@ var pluginsArr = [
         NODE_ENV: JSON.stringify('development')
     })
 ];
-//设置页面上的公共信息，有几个写几个
-pluginsArr.push(
-    new HtmlWebpackPlugin({
-        filename: 'index.html',      //生成的html存放路径，相对于path
-        template: 'src/modules/index/index.html',  //html模板路径
+//自动生成html页面
+pageArr.forEach((page) => {
+    const htmlPlugin = new HtmlWebpackPlugin({
+        filename: (page=="index" ? 'index.html' : page+"/"+page+".html"),      //生成的html存放路径，相对于path
+        template: 'src/modules/index/index.ejs',  //html模板路径
         inject: 'body',                     //js插入的位置，true/'head'/'body'/false
         //hash: true,                         //为静态资源生成hash值
-        chunks: ['common', 'index'],       //需要引入的chunk，不配置就会引入所有页面的资源
+        chunks: ['common', page],       //需要引入的chunk，不配置就会引入所有页面的资源
         minify: {                           //压缩HTML文件    
             removeComments: true,           //移除HTML中的注释
-            collapseWhitespace: false       //删除空白符与换行符
-        }
-    }),
-    new HtmlWebpackPlugin({
-        filename: 'home/home.html',      //生成的html存放路径，相对于path
-        template: 'src/modules/home/home.html',  //html模板路径
-        inject: 'body',                     //js插入的位置，true/'head'/'body'/false
-        //hash: true,                         //为静态资源生成hash值
-        chunks: ['common', 'home'],       //需要引入的chunk，不配置就会引入所有页面的资源
-        minify: {                           //压缩HTML文件    
-            removeComments: true,           //移除HTML中的注释
-            collapseWhitespace: false       //删除空白符与换行符
-        }
-    }),
-    new HtmlWebpackPlugin({
-        filename: 'about/about.html',      //生成的html存放路径，相对于path
-        template: 'src/modules/about/about.html',  //html模板路径
-        inject: 'body',                     //js插入的位置，true/'head'/'body'/false
-        //hash: true,                         //为静态资源生成hash值
-        chunks: ['common', 'about'],       //需要引入的chunk，不配置就会引入所有页面的资源
-        minify: {                           //压缩HTML文件    
-            removeComments: true,           //移除HTML中的注释
-            collapseWhitespace: false       //删除空白符与换行符
+            collapseWhitespace: true       //删除空白符与换行符
         }
     })
-)
+    pluginsArr.push(htmlPlugin);
+});
 if (isDev) {
     console.log('--------------------development--------------------');
     pluginsArr.push(
         //生成映射关系的依赖图
         new ManifestPlugin({
             fileName: "manifest/manifest.json"
+        }),
+        //提取css文件，单独使用link标签加载css并设置路径，相对于output配置中的publickPath
+        new ExtractTextPlugin({
+            filename: (getPath) => {            
+                return getPath('[name]/[name].css').replace('common', 'assets/common');
+            },
+            allChunks: true
         })
     )
 }
@@ -113,15 +99,19 @@ if (isProd) {
         //删除未引用代码,压缩js插件
         new UglifyJSPlugin({
             uglifyOptions: {
-              ie8: false,
-              ecma: 8,
-              output: {
-                comments: false,
-                beautify: false,
-              },
-              compress: false,
-              warnings: false
+              ie8: false,       //是否支持ie8
+              ecma: 5,          //支持ECMAScript的版本
+              output: {},       //默认输出为最佳压缩优化
+              compress: true,   //压缩选项
+              warnings: false   //显示警告提示
             }
+        }),
+        //提取css文件，单独使用link标签加载css并设置路径，相对于output配置中的publickPath
+        new ExtractTextPlugin({
+            filename: (getPath) => {            
+                return getPath('[name]/[name].[hash].css').replace('common', 'assets/common');                
+            },
+            allChunks: true
         })
     );
     devTool = "inline-source-map";
@@ -153,8 +143,9 @@ module.exports = {
                 include: [
                     path.resolve(__dirname, "src/statics/styles/")
                 ],                    
-                use: ExtractTextPlugin.extract({   
-                    use: ["css-loader"]                     
+                use: ExtractTextPlugin.extract({ 
+                    fallback: "style-loader",   
+                    use: ['css-loader']                     
                 }),
             }, {
                 test: /\.css$/,   
@@ -168,10 +159,10 @@ module.exports = {
                         {loader: 'postcss-loader',
                             options:{
                                 plugins: [
-                                    require('postcss-import')(),
-                                    require('postcss-assets')(),
-                                    require('autoprefixer')(),
-                                    require('cssnano')()
+                                    require('postcss-import'),
+                                    require('postcss-assets'),
+                                    require('autoprefixer'),
+                                    require('cssnano')
                                 ]
                             }                      
                         }
@@ -179,10 +170,23 @@ module.exports = {
                 })
             }, {
                 test: /\.less$/,
-                use: [
-                {loader: "style-loader" },
-                { loader: "css-loader"}, 
-                { loader: "less-loader" }]
+                use: ExtractTextPlugin.extract({    
+                    fallback: "style-loader",  
+                    use: [
+                        {loader: 'css-loader', options: { importLoaders: 1 }},
+                        {loader: 'less-loader'},
+                        {loader: 'postcss-loader',
+                            options:{
+                                plugins: [
+                                    require('postcss-import'),
+                                    require('postcss-assets'),
+                                    require('autoprefixer'),
+                                    require('cssnano')
+                                ]
+                            }                      
+                        }
+                    ]             
+                })
             }, {
                 test: /\.(png|jpg|gif)$/, 
                 use: ['file-loader?limit=8192&name=assets/images/[name].[ext]']
@@ -192,6 +196,9 @@ module.exports = {
             }, {
                 test: /\.html$/,
                 use: "html-withimg-loader"
+            }, {
+                test: /\.ejs$/,
+                use: "ejs-loader"
             }
         ]
     },

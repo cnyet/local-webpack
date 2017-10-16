@@ -1,2 +1,2 @@
-import "./index.css";
+import "./index.less";
 import "bootstrap/dist/js/bootstrap.min.js";
