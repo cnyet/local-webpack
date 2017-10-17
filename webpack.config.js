@@ -1,5 +1,4 @@
 var webpack = require("webpack");
-var ejs = require("ejs");
 var util = require('util');                                 //nodejs的核心模块，提供常用函数的集合
 var path = require("path");                                                     //引入nodejs再带的path模块，用于处理目录的对象
 var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin");     //将模块中公共部分抽离出来生成单独的文件
@@ -64,13 +63,13 @@ var pluginsArr = [
 pageArr.forEach((page) => {
     const htmlPlugin = new HtmlWebpackPlugin({
         filename: (page=="index" ? 'index.html' : page+"/"+page+".html"),      //生成的html存放路径，相对于path
-        template: 'src/modules/index/index.ejs',  //html模板路径
+        template: 'src/modules/'+page+'/html.hbs',  //html模板路径
         inject: 'body',                     //js插入的位置，true/'head'/'body'/false
         //hash: true,                         //为静态资源生成hash值
-        chunks: ['common', page],       //需要引入的chunk，不配置就会引入所有页面的资源
+        chunks: ['common', page],           //需要引入的chunk，不配置就会引入所有页面的资源
         minify: {                           //压缩HTML文件    
             removeComments: true,           //移除HTML中的注释
-            collapseWhitespace: true       //删除空白符与换行符
+            collapseWhitespace: false       //删除空白符与换行符
         }
     })
     pluginsArr.push(htmlPlugin);
@@ -197,8 +196,8 @@ module.exports = {
                 test: /\.html$/,
                 use: "html-withimg-loader"
             }, {
-                test: /\.ejs$/,
-                use: "ejs-loader"
+                test: /\.hbs$/,
+                use: "handlebars-loader"        
             }
         ]
     },
