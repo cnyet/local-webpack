@@ -16,6 +16,7 @@ var args = require('yargs').argv;                      //给程序传递参数
 var isProd = Boolean(process.env.NODE_ENV === "production");             //执行命令是否包含生产环境的字段
 var isDev = Boolean(process.env.NODE_ENV === "development");
 var devTool = 'inline-cheap-module-source-map';
+var server = require("./config/server");
 var entryObj = {
     index: "./src/modules/index/index.js",
     home: "./src/modules/home/home.js",
@@ -63,7 +64,7 @@ var pluginsArr = [
 pageArr.forEach((page) => {
     const htmlPlugin = new HtmlWebpackPlugin({
         filename: (page=="index" ? 'index.html' : page+"/"+page+".html"),      //生成的html存放路径，相对于path
-        template: 'src/modules/'+page+'/html.hbs',  //html模板路径
+        template: 'src/modules/'+page+'/'+page+'.html',  //html模板路径
         inject: 'body',                     //js插入的位置，true/'head'/'body'/false
         //hash: true,                         //为静态资源生成hash值
         chunks: ['common', page],           //需要引入的chunk，不配置就会引入所有页面的资源
@@ -194,7 +195,13 @@ module.exports = {
                 use: ['file-loader?name=assets/fonts/[name].[ext]']
             }, {
                 test: /\.html$/,
-                use: "html-withimg-loader"
+                use: {
+                    loader: "html-loader",
+                    options: {
+                        // attrs: [":data-src"],
+                        interpolate: "require"                         
+                    }
+                }
             }, {
                 test: /\.hbs$/,
                 use: "handlebars-loader"        
@@ -211,14 +218,6 @@ module.exports = {
     plugins: pluginsArr,
     //编译后的代码映射回原始源代码
     devtool: devTool,       
-    //实时重新加载根目录
-    devServer: {        
-        contentBase: "./",   //静态文件的根目录        
-        openPage: 'index.html',                    //默认打开的页面
-        compress: true,                                //一切服务都启用gzip 压缩
-        port: 3000,                                     //服务端口号     
-        noInfo: true, 
-        inline: true,                          //可以监控js变化，一段处理实时重载的脚本被插入到你的包(bundle)，并且构建消息将会出现在浏览器控制台
-        historyApiFallback: true,               //当使用 HTML5 History API 时，任意的 404 响应都可能需要被替代为 index.html
-    }
+    //web服务器
+    devServer: server
 };
