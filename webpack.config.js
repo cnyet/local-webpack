@@ -38,7 +38,8 @@ var pluginsArr = [
     new webpack.ProvidePlugin({
         $: 'jquery',
         jQuery: 'jquery',
-        _: "lodash"
+        _: "lodash",
+        Vue: "vue"
     }),
     //将公共代码抽离出来合并为一个单独文件
     new webpack.optimize.CommonsChunkPlugin({

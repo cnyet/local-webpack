@@ -47,6 +47,7 @@
     "precss": "^2.0.0",
     "style-loader": "^0.18.2",
     "uglifyjs-webpack-plugin": "^0.4.6",
+    "vue-loader": "^13.3.0",
     "webpack": "^3.6.0",
     "webpack-dashboard": "^1.0.0-5",
     "webpack-dev-middleware": "^1.12.0",
@@ -62,6 +63,7 @@
     "jquery": "^3.2.1",
     "mustache": "^2.3.0",
     "normalize.css": "^7.0.0",
+    "vue": "^2.5.2",
     "yarn": "^1.2.0"
   }
 }

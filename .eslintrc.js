@@ -23,5 +23,6 @@ module.exports = {
     "comma-spacing": "error",               //不允许在逗号前面出现空格
     "no-const-assign": "error",             //禁止修改const声明的变量
     "eol-last": "off",                      //代码间出现空白行，关闭提示
+    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,   //生产环境禁止使用debugger
   }
 };
