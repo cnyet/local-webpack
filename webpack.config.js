@@ -122,10 +122,11 @@ module.exports = {
     entry: entryObj,    
     //打包输出文件
     output: { 
-        path: path.resolve(__dirname, "dist"),          //输出文件目录
-        filename: "[name]/[name].js",                       //输出文件名定义
-        chunkFilename: '[name]/[name].bundle.js',              //设置非入口文件chunk的文件名
-        publicPath: '/'                                 //指定在浏览器中所引用的目录,设置服务器上的资源根目录
+        path: path.resolve(__dirname, "dist"),           //输出文件目录
+        filename: "[name]/[name].js",                    //输出文件名定义
+        chunkFilename: '[name]/[name].bundle.js',        //设置非入口文件chunk的文件名
+        publicPath: '/',                                 //指定在浏览器中所引用的目录,设置服务器上的资源根目录
+        hashDigestLength: 10,                            //全局配置散列摘要的前缀长度
     },
     //loader用于对模块的源代码进行转换
     module: {       
