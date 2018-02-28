@@ -22,7 +22,7 @@ var entryObj = {
     home: "./src/modules/home/home.js",
     about: "./src/modules/about/about.js",
     common: [       
-        "./src/statics/styles/ui.css" 
+        "./src/statics/styles/ui.css"
     ]
 };
 //所有页面列表
