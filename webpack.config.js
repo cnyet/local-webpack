@@ -110,7 +110,8 @@ if (isProd) {
                 ecma: 5, //支持ECMAScript的版本
                 output: {}, //默认输出为最佳压缩优化
                 compress: true, //压缩选项
-                warnings: false //显示警告提示
+                warnings: false, //显示警告提示
+                sourceMap: true     //支持sourcemap
             }
         }),
         //提取css文件，单独使用link标签加载css并设置路径，相对于output配置中的publickPath
@@ -129,7 +130,7 @@ module.exports = {
     //打包输出文件
     output: {
         path: path.resolve(__dirname, "dist"), //输出文件目录
-        filename: "[name]/[name].js", //输出文件名定义
+        filename: isProd ? '[name]/[name].[hash].js' : '[name]/[name].js', //输出文件名定义
         chunkFilename: '[name]/[name].bundle.js', //设置非入口文件chunk的文件名
         publicPath: '/', //指定在浏览器中所引用的目录,设置服务器上的资源根目录
         hashDigestLength: 10, //全局配置散列摘要的前缀长度

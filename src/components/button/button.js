@@ -13,7 +13,6 @@ export default class Button {
   }
   render (node) {
     const text = $(node).text();
-
     $(node).html(
       Mustache.render(template, {text})
     );
