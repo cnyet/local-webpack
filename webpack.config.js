@@ -147,6 +147,11 @@ module.exports = {
                 emitError: true,
             }
         }, {
+            test: /\.js$/,
+            loader: 'babel-loader',
+            exclude: /node_modules/,
+            include: [path.resolve(__dirname, "src")]
+        }, {
             test: /\.css$/,
             include: [
                 path.resolve(__dirname, "src/statics/styles/")
