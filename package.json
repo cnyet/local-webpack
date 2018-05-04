@@ -4,10 +4,12 @@
   "description": "this is a demo for webpack.",
   "main": "index.js",
   "scripts": {
-    "start": "set NODE_ENV=development&& webpack-dev-server --open --progress",
+    "start": "export NODE_ENV=development&& webpack-dev-server --open --progress",
+    "dev-mac": "export NODE_ENV=development&&webpack --config webpack.config.js --progress",
+    "dev-win": "set NODE_ENV=development&&webpack --config webpack.config.js --progress",
     "dash": "webpack-dashboard -- node webpack.config.js",
-    "dev": "set NODE_ENV=development&&webpack --config webpack.config.js --progress",
-    "build": "set NODE_ENV=production&& webpack --progress"
+    "dev": "export NODE_ENV=development&&webpack --config webpack.config.js --progress",
+    "build": "export NODE_ENV=production&& webpack --progress"
   },
   "repository": {
     "type": "git",

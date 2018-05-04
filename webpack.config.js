@@ -141,14 +141,14 @@ module.exports = {
         rules: [{
             test: /\.js$/,
             exclude: /node_modules/,
-            loader: "eslint-loader",
+            use: "eslint-loader",
             options: {
                 fix: true,
                 emitError: true,
             }
         }, {
             test: /\.js$/,
-            loader: 'babel-loader',
+            use: 'babel-loader',
             exclude: /node_modules/,
             include: [path.resolve(__dirname, "src")]
         }, {
