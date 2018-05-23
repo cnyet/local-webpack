@@ -8,6 +8,7 @@ var CleanWebpackPlugin = require('clean-webpack-plugin'); //清理文件
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin'); //能够删除未引用代码压缩js插件
 var postcssSprites = require('postcss-sprites'); //合并图片生产雪碧图
 var sprites = postcssSprites.default;
+var merge = require('webpack-merge'); 
 var precss = require('precss'); //PostCSS插件中的预处理插件包
 var assets = require('postcss-assets'); //用来处理图片和 SVG,图片转换成 Base64 编码的 data url 的格式
 var autoprefixer = require('autoprefixer'); //增加浏览器相关的声明前缀
