@@ -5,7 +5,6 @@ var CommonsChunkPlugin = require("webpack/lib/optimize/CommonsChunkPlugin"); //�
 var HtmlWebpackPlugin = require("html-webpack-plugin"); //生成HTML文件
 var ExtractTextPlugin= require("extract-text-webpack-plugin"); //将js中引用的css文件分离出单个CSS文件
 var CleanWebpackPlugin = require('clean-webpack-plugin'); //清理文件
-var ManifestPlugin = require('webpack-manifest-plugin'); //保留所有模块的映射关系的详细要点
 var UglifyJSPlugin = require('uglifyjs-webpack-plugin'); //能够删除未引用代码压缩js插件
 var postcssSprites = require('postcss-sprites'); //合并图片生产雪碧图
 var sprites = postcssSprites.default;
