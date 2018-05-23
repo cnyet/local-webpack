@@ -18,9 +18,9 @@ var isDev = Boolean(process.env.NODE_ENV === "development");
 var devTool = 'inline-cheap-module-source-map';
 var server = require("./config/server");
 var entryObj = {
-    index: "./src/modules/index/index.js",
-    home: "./src/modules/home/home.js",
-    about: "./src/modules/about/about.js",
+    index: "./src/views/index/index.js",
+    home: "./src/views/home/home.js",
+    about: "./src/views/about/about.js",
     common: [
         "./src/statics/styles/ui.css"
     ]
@@ -71,7 +71,7 @@ function resolvePath(dir) {
 pageArr.forEach((page) => {
     const htmlPlugin = new HtmlWebpackPlugin({
         filename: (page == "index" ? 'index.html' : page + "/" + page + ".html"), //生成的html存放路径，相对于path
-        template: 'src/modules/' + page + '/' + page + '.html', //html模板路径
+        template: 'src/views/' + page + '/' + page + '.html', //html模板路径
         inject: 'body', //js插入的位置，true/'head'/'body'/false
         //hash: true,                         //为静态资源生成hash值
         chunks: ['common', page], //需要引入的chunk，不配置就会引入所有页面的资源
@@ -141,7 +141,7 @@ module.exports = {
         rules: [{
             test: /\.js$/,
             exclude: /node_modules/,
-            use: "eslint-loader",
+            loader: "eslint-loader",
             options: {
                 fix: true,
                 emitError: true,
