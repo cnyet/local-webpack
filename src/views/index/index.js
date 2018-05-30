@@ -1,3 +1,5 @@
-import "./index.less";
+import "./index.css";
+import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.min.js";
-import "@/holder.min.js";
+
+[1, 2, 3].map(n => {n*2});
