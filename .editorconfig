@@ -1,0 +1,13 @@
+#统一不同编辑器的代码风格
+
+#编辑器配置文件放在跟目录
+root = true
+#用Unix风格的换行，每个文件以一个换行结尾
+#所有文件用2个空格缩进，将行尾空格自动删除
+[*]
+charset = utf-8
+indent_style = space
+indent_size = 2
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
