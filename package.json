@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack --progress",
-    "server": "webpack-dev-server --open --progress"
+    "server": "webpack-dev-server --open --progress",
     "build": "webpack --env.production --progress"
   },
   "author": "yate",
@@ -37,6 +37,7 @@
   },
   "dependencies": {
     "bootstrap": "^4.0.0-alpha.6",
+    "font-awesome": "^4.7.0",
     "jquery": "^3.3.1"
   }
 }
