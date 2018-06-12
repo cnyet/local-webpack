@@ -30,6 +30,8 @@ module.exports = {
   //web服务器配置
   devServer: webServer,
   plugins: [
+    //查看要修补(patch)的依赖
+    new webpack.NamedModulesPlugin(),
     //启用模块热替换
     new webpack.HotModuleReplacementPlugin(),
     ...htmlPageArr(path.join(__dirname, "..", "src/views/")),

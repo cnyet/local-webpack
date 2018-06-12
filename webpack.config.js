@@ -24,7 +24,6 @@ function getEntryfile(dir){
 module.exports = function (env) {
   const prodEnv = env && env.production ? true : false;
   const mergeConf = prodEnv ? prodConfig : devConfig;
-  console.log(mergeConf);
 
   return merge(mergeConf, {
     entry: getEntryfile("./src/views/"),
@@ -69,7 +68,7 @@ module.exports = function (env) {
       modules: [path.resolve(__dirname, "src"), 'node_modules'],
       //设置别名
       alias: {
-        '@': path.join(__dirname, "vendors"),
+        '@': path.join(__dirname, "src"),
       }
     },
     //优化处理

@@ -1,4 +1,4 @@
-console.log("\n"+process.env.NODE_ENV);
+// console.log("\n"+process.env.NODE_ENV);
 module.exports =  ({ file, options, env }) => ({
   parser: file.extname === '.sss' ? 'sugarss' : false,
   plugins: {
