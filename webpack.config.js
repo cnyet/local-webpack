@@ -35,9 +35,19 @@ module.exports = function (env) {
     },
     module: {
       rules: [{
+        test: /\.(js|vue)$/,
+        loader: "eslint-loader",
+        enforce: 'pre',
+        exclude: /node_modules/,
+        options: {
+          fix: true,
+          emitError: true,
+          formatter: require('eslint-friendly-formatter')
+        }
+      }, {
         test: /\.js$/,
-        use: "babel-loader",
-        exclude: /node_modules/
+        loader: "babel-loader",
+        exclude: /node_modules/,
       }, {
         test: /\.css$/,
         use: ExtractTextPlugin.extract({
