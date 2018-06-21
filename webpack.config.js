@@ -50,6 +50,7 @@ module.exports = function (env) {
         exclude: /node_modules/,
       }, {
         test: /\.css$/,
+        exclude: /node_modules/,
         use: ExtractTextPlugin.extract({
           fallback: "style-loader",
           use: ["css-loader", "postcss-loader"]
