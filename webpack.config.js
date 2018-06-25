@@ -49,12 +49,33 @@ module.exports = function (env) {
         loader: "babel-loader",
         exclude: /node_modules/,
       }, {
-        test: /\.css$/,
-        exclude: /node_modules/,
+        test: /\.scss$/,
         use: ExtractTextPlugin.extract({
-          fallback: "style-loader",
-          use: ["css-loader", "postcss-loader"]
-        }),
+          use: [{
+            loader: "css-loader",
+            options: {
+              minimize: true
+            }
+          }, {
+            loader: "postcss-loader"
+          }, {
+            loader: "sass-loader"
+          }],
+          fallback: "style-loader"
+        })
+      }, {
+        test: /\.css$/,
+        use: ExtractTextPlugin.extract({
+          use: [{
+            loader: "css-loader",
+            options: {
+              minimize: true
+            }
+          }, {
+            loader: "postcss-loader"
+          }],
+          fallback: "style-loader"
+        })
       }, {
         test: /\.(png|jpg|gif)$/,
         use: ['file-loader?limit=8192&name=images/[name].[ext]']
@@ -87,19 +108,25 @@ module.exports = function (env) {
       //优化按需加载的文件
       splitChunks: {
         cacheGroups: {
+          //创建一个commons的文件，包含每个入口文件都包含的公共代码块
           commons: {
             name: "commons",
             chunks: "initial",
             minChunks: 2
           }
         }
-      },
-      //优化runtime的文件
-      runtimeChunk: {
-        name: 'manifest'
       }
     },
     plugins: [
+      //自动加载模块，而不必到处 import 或 require
+      new webpack.ProvidePlugin({
+        $: 'jquery',
+        jQuery: 'jquery',
+        _: "lodash",
+        Vue: "vue/dist/vue.common.js",
+        Holder: 'holderjs',
+        Tether: "tether"
+      }),
       new UglifyJsPlugin({
         uglifyOptions: {
           ie8: false, //是否支持ie8
