@@ -7,6 +7,7 @@ import "./index.scss";
 let result = [1, 2, 3 ].map(n => {return n*2;});
 console.log(result);
 Holder.run({
+  domain: "example.com",
   themes: {
     "simple": {
       bg: "#0F92D9",

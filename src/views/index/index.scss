@@ -1,0 +1,26 @@
+.wrap {
+  background-color: black;
+  display: grid;
+  transition: all .5s;
+  user-select: none;
+  border-radius: 5px;
+  height: 50px;
+  color: white;
+  width: 200px;
+  display: flex;
+}
+.notify{
+  width: 24px;
+  height: 25px;
+  background: transparent url("../../statics/images/notify.png") no-repeat;
+}
+.sad{
+  width: 34px;
+  height: 30px;
+  background: transparent url("../../statics/images/sad.png?_sprite") no-repeat;
+}
+.error{
+  width: 15px;
+  height: 15px;
+  background: transparent url("../../statics/images/wrong.png?_sprite") no-repeat;
+}
