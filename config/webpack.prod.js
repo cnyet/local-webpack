@@ -34,7 +34,7 @@ function htmlPageArr(dir) {
 module.exports = {
   mode: 'production',
   //编译后的代码映射回原始源代码
-  devtool: 'source-maps',
+  devtool: 'cheap-module-source-map',
   plugins: [
     //在编译出现错误时跳过输出阶段,确保输出资源不会包含错误
     new webpack.NoEmitOnErrorsPlugin(),
