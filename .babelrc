@@ -1,27 +1,26 @@
 {
-  //设置转码规则
+  //设置babel转码规则
   "presets": [
-    //该preset就会只编译包含我们所声明环境缺少的特性的代码
-    ["env", {
-      "modules": false,   ////对amd,commonjs这样的模块化文件不转码
-      // "comments": false,  //在生成的文件中不产生注释
-      "targets": {
-        //指定支持主流浏览器最新的两个版本以及IE 8+,支持超过市场份额1%的浏览器
-        "browsers": ["> 1%", "last 2 versions", "ie >= 8"]
+    [
+      "@babel/preset-env",  // 插件预设, 根据代码执行平台环境和具体浏览器的版本来产出对应的 JavaScript 代码
+      {
+        "targets": {}, // 这里是targets的配置，根据实际browserslist设置
+        "corejs": 3, // 添加core-js版本
+        "modules": false, // 模块使用 es modules ，不使用 commonJS 规范
+        "useBuiltIns": "usage" // 默认 false, 可选 entry , usage
       }
-    }],
-    "es2015",     //ES2015转码规则
-    "stage-2",    //ES7第二阶段语法提案的转码规则
+    ]
   ],
   //插件
-  "plugins": ["transform-runtime", {  //所有的这些辅助（垫片）将会引用babel-runtime来避免编译时重复。runtime将会编译到你的build中
-      //表示是否开启内联的babel helpers(即babel或者环境本来的存在的垫片或者某些对象方法函数)在调用模块名字(moduleName)时将被替换名字
-      //"helpers": false,
-      //表示是否把内置的东西(Promise,Set,Map,tec)转换成非全局污染垫片
-      //"polyfill": false,
-      //是否开启generator函数转换成使用regenerator runtime来避免污染全局域
-      //"regenerator": true,
-      //当调用辅助（内置垫片）设置模块（module）名字/路径
-      //"moduleName": "babel-runtime"
-    }]
+  "plugins": [
+    [
+      "@babel/plugin-transform-runtime",
+      {
+        "corejs": false, // 默认值，可以不写
+        "helpers": true, // 默认，可以不写, 表示是否开启内联的babel helpers(即babel或者环境本来的存在的垫片或者某些对象方法函数)在调用模块名字(moduleName)时将被替换名字
+        "regenerator": false, // 通过 preset-env 已经使用了全局的 regeneratorRuntime, 不再需要 transform-runtime 提供的 不污染全局的 regeneratorRuntime
+        "useESModules": true // 使用 es modules helpers, 减少 commonJS 语法代码
+      }
+    ]
+  ]
 }

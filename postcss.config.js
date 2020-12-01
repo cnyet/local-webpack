@@ -1,19 +1,16 @@
-module.exports =  ({ file, options, env }) => ({
-  plugins: {
-    //检测到主样式表中@import的文件然后合并到文件中，自动发现Bower Component和Node Module中样式文件
-    'postcss-import': { root: file.dirname },
-    //处理图片和 SVG
-    'postcss-assets': {},
-    //添加浏览器前缀
-    'autoprefixer': {},
-    //压缩和优化样式表的功能
-    'cssnano': {},
-    //处理包含类似sass的新特性
-    "precss": {},
-    //生成雪碧图
-    "postcss-sprites": {
+const postcssSprites = require('postcss-sprites');
+
+module.exports = {
+  plugins: [
+    require('autoprefixer'),  // 添加前缀
+    require('postcss-nested'),  // 解析样式嵌套规则
+    require('postcss-preset-env'),  // 根据预设的浏览器支持的样式版本来编译最新的css 新特性
+    require('cssnano'),  // 合并压缩一些类，缩短一些常见的值
+    require('postcss-import'),  // 处理 @import 引入的样式文件
+    postcssSprites({
       // stylesheetPath: './dist',
-      //雪碧图合并后存放地址
+      // 在这里制定了从哪里加载的图片被主动使用css sprite
+      // 可以约定好一个目录名称规范，防止全部图片都被处理
       spritePath: './dist/images',
       //支持retina，可以实现合并不同比例图片
       retina: true,
@@ -25,6 +22,6 @@ module.exports =  ({ file, options, env }) => ({
           return Promise.reject();
         }
       }
-    }
-  }
-});
+    })
+  ]
+}
