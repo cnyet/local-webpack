@@ -2,16 +2,14 @@ const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 // 不同命名空间下静态资源的路径前缀
 const assetPrefixForNamespace = (namespace) => {
   switch (namespace) {
     case 'prod':
       return 'https://cache.myserver.net/web';
-    case 'uat':
-      return 'https://cache-uat.myserver.net/web';
-    case 'st':
-      return 'https://cache-st.myserver.net/web';
+    case 'stag':
+      return 'https://cache-stag.myserver.net/web';
     case 'dev':
       return 'https://cache-dev.myserver.net/web';
     default:
@@ -23,13 +21,15 @@ __webpack_public_path__ = `${assetPrefixForNamespace(namespace)}/`;  // CDN主�
 
 module.exports = {
   entry: './src/index.js',  // 项目入口文件，支持字符串、对象、数组
-  output: {   // 项目的输出文件
+  output: {  // 项目的输出文件
     /**
      * hash: 修改任何文件都会改变hash
      * chunkhash: entry 的模块文件不变hash不变
      * contenthash: 把 CSS 从 JS 中使用mini-css-extract-plugin 或 extract-text-webpack-plugin抽离出来并使用 contenthash
      */
-    filename: 'js/' + '[name]-[hash:7].js',
+    path: path.resolve(__dirname, '../dist'),
+    filename: '[name].js',
+    chunkFilename: '[name].js',
     publicPath: '/',  // 指定在浏览器中被引用的 URL 地址，用来作为src或者link指向该文件
     /**
      * var: 只能以 <script> 标签的形式引入
@@ -40,11 +40,6 @@ module.exports = {
     // libraryTarget: 'amd',  // 指定库打包出来的规范
     // target:   // 两种类型：string 和 function。
   },
-  /**
-  * 生产环境不使用或者使用 source-map
-  * 开发环境使用cheap-module-eval-source-map
-  */
-  devtool: 'eval-cheap-module-source-map',
   // 帮助webpack快速遍历模块依赖
   resolve: {
     // 省略引入的模块扩展名
@@ -60,6 +55,9 @@ module.exports = {
     noParse: /jquery|lodash/,
     // 给不同的模块设置loader
     rules: [{
+      test: /\.vue$/,
+      loader: 'vue-loader'
+    }, {
       // 匹配文件
       test: /\.js$/,
       // 缩小匹配范围
@@ -165,10 +163,8 @@ module.exports = {
     new webpack.optimize.MinChunkSizePlugin({
       minChunkSize: 10000 // Minimum number of characters
     }),
-    // 生成html页面
-    new HtmlWebpackPlugin({
-      title: 'Custom template',
-      template: './public/index.html'
-    })
+    // 将你定义过的其它规则复制并应用到 .vue 文件里相应语言的块
+    // 例如，如果你有一条匹配 /\.js$/ 的规则，那么它会应用到 .vue 文件里的 <script> 块
+    new VueLoaderPlugin()
   ]
 };
