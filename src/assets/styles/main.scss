@@ -1,12 +1,6 @@
-@import './reset.css';
+@import 'assets/styles/reset.css';
 
 .container{
   display: flex;
   box-sizing: border-box;
-}
-.img{
-  width: 300px;
-  height: 200px;
-  background: transparent url('@/assets/images/banner01.png') no-repeat;
-  background-size: cover;
 }

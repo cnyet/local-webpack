@@ -1,8 +1,8 @@
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
-const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
+const VueLoaderPlugin = require('vue-loader/lib/plugin');
+
 // 不同命名空间下静态资源的路径前缀
 const assetPrefixForNamespace = (namespace) => {
   switch (namespace) {
@@ -30,7 +30,7 @@ module.exports = {
     path: path.resolve(__dirname, '../dist'),
     filename: '[name].js',
     chunkFilename: '[name].js',
-    publicPath: '/',  // 指定在浏览器中被引用的 URL 地址，用来作为src或者link指向该文件
+    publicPath: '/',  // 指定在浏览器中被引用的 URL 地址，用来作为src或者link指向该文件, 用于确定 bundle 的来源
     /**
      * var: 只能以 <script> 标签的形式引入
      * commonjs: 只能按照 commonjs 的规范引入
@@ -46,7 +46,7 @@ module.exports = {
     extensions: ['.js', '.ts', '.json'],
     // 简化引入的模块路径
     alias: {
-      '@': path.resolve(__dirname, 'src')
+      '@': path.resolve(__dirname, 'src')  // HTML 和 CSS 使用alias必须要前面添加 ~
     }
   },
   // 给不同的模块设置模块处理器
@@ -71,33 +71,29 @@ module.exports = {
       // 模块处理器
       loader: 'babel-loader'
     }, {
-      test: /\.css$/,
+      test: /\.(sa|sc|c)ss$/,
       // 设置loader的规则和从后到前执行顺序
       use: [
-        'style-loader',
+        'vue-style-loader',
         MiniCssExtractPlugin.loader,
         {
-          loader: 'css-loader',
+          loader: 'css-loader',  // 将 CSS 转化成 CommonJS 模块, style-loader 将 JS 字符串生成为 style 节点
           options: {
             importLoaders: 1
           }
         },
-        'postcss-loader'
-      ]
-    }, {
-      test: /\.scss$/,
-      // 设置loader的规则和从后到前执行顺序
-      use: [
-        'style-loader',
-        MiniCssExtractPlugin.loader,
+        'postcss-loader',
         {
-          loader: 'css-loader',
+          // sass-loader 使用 Sass 提供的 custom importer 特性
+          // 从 node_modules 中引入模块，需要在包名前加上 ~
+          // url()引入样式文件时传递给了 css-loader，则所有的 url 规则都必须是相对于入口文件
+          loader: 'sass-loader',
           options: {
-            importLoaders: 1
+            sourceMap: true,  // 默认值取决于 devtool 选项, 除 eval 和 false 之外的所有值都将开启 source map 的生成
+            // implementation 选项可以以模块的形式接受 sass（Dart Sass）或 node-sass, `dart-sass` 是首选
+            implementation: require("sass"),
           }
         },
-        'sass-loader',
-        'postcss-loader'
       ]
     }, {
       test: /\.(png|svg|jpe?g|gif)$/,
@@ -113,50 +109,38 @@ module.exports = {
         {
           loader: 'image-webpack-loader',  // 压缩图片
           options: {
-            bypassOnDebug: true, // webpack@1.x
-            disable: true, // webpack@2.x and newer
-            // mozjpeg: {
-            //   progressive: true,
-            // },
-            // // optipng.enabled: false will disable optipng
-            // optipng: {
-            //   enabled: false,
-            // },
-            // pngquant: {
-            //   quality: [0.65, 0.90],
-            //   speed: 4
-            // },
-            // gifsicle: {
-            //   interlaced: false,
-            // },
-            // svgo: {
-            //   removeViewBox: false,
-            // },
-            // // the webp option will enable WEBP
-            // webp: {
-            //   quality: 75
-            // }
+            // bypassOnDebug: true, // webpack@1.x
+            // disable: true, // webpack@2.x and newer
+            mozjpeg: {
+              progressive: true,
+            },
+            // optipng.enabled: false will disable optipng
+            optipng: {
+              enabled: false,
+            },
+            pngquant: {
+              quality: [0.60, 0.80],
+              speed: 4
+            },
+            gifsicle: {
+              interlaced: false,
+            },
+            svgo: {
+              removeViewBox: false,
+            },
+            // the webp option will enable WEBP
+            webp: {
+              quality: 75
+            }
           }
         }
       ]
     }]
   },
-  // webpack4 以上版本模块优化设置
-  optimization: {
-    // 将公共模块拆分
-    splitChunks: {
-      chunks: 'async',
-      minSize: 20000,
-      maxSize: 0,
-      minChunks: 1,
-    },
-    minimize: true,   // 启用minimizer定义的插件优化
-    minimizer: [new CssMinimizerPlugin()]  // 用cssnano优化和压缩css文件
-  },
   plugins: [
     // 导出css文件到单独的chunk，以<link>的方式引入样式文件
     new MiniCssExtractPlugin({
-      filename: 'css/' + '[name]-[contenthash:7].css',
+      filename: 'css/[name]-[contenthash:7].css',
       chunkFilename: '[id].css'
     }),
     // 限制合并chunk的文件大小

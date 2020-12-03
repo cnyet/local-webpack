@@ -1,4 +1,5 @@
 /dist/
+/statics/
 /config/
 /test/
 /*.js
