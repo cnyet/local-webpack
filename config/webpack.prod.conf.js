@@ -10,7 +10,7 @@ const path = require("path"); //引入nodejs再带的path模块，用于处理�
 const prodWebpackConfig = {
   mode: 'production',
   // 编译后的代码映射回原始源代码
-  devtool: 'hidden-source-map',
+  devtool: 'none',
   output: {
     filename: 'js/[name].[chunkhash:7].js',
     chunkFilename: 'js/[name].[chunkhash:7].js'
@@ -35,6 +35,8 @@ const prodWebpackConfig = {
     ]
   },
   plugins: [
+    // 在编译时创建配置的全局常量
+    // 本插件会直接替换文本，因此提供的值必须在字符串本身中再包含一个实际的引号
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: '"production"',

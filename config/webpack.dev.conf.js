@@ -14,6 +14,8 @@ const devWebpackConfig = {
   */
   devtool: 'eval-cheap-module-source-map',
   plugins: [
+    // 在编译时创建配置的全局常量
+    // 本插件会直接替换文本，因此提供的值必须在字符串本身中再包含一个实际的引号
     new webpack.DefinePlugin({
       'process.env': {
         NODE_ENV: '"development"',
