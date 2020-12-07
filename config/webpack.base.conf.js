@@ -141,7 +141,7 @@ module.exports = {
     // 导出css文件到单独的chunk，以<link>的方式引入样式文件
     new MiniCssExtractPlugin({
       filename: 'css/[name]-[contenthash:7].css',
-      chunkFilename: '[id].css'
+      chunkFilename: 'css/[name]-[contenthash:7].css'
     }),
     // 限制合并chunk的文件大小
     new webpack.optimize.MinChunkSizePlugin({

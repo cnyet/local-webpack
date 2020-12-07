@@ -26,11 +26,30 @@ const prodWebpackConfig = {
       maxSize: 0,
       minChunks: 1,
     },
+    runtimeChunk: {   // 创建一个在所有生成 chunk 之间共享的运行时文件
+      name: 'runtime'
+    },
     minimize: true,   // 启用minimizer定义的插件优化
     minimizer: [
-      new CssMinimizerPlugin(), // 用cssnano优化和压缩css文件
-      new TerserPlugin({  // 压缩 JavaScript 代码, webpack v5 自带最新该插件
+      new CssMinimizerPlugin({
+        cache: true,  // 开启缓存
         parallel: true  // 开启多线程
+      }), // 用cssnano优化和压缩css文件
+      new TerserPlugin({  // 压缩 JavaScript 代码, webpack v5 自带最新该插件
+        parallel: true,  // 开启多线程
+        terserOptions: {
+          comments: false, // 删除注释
+          compress: {
+            // 删除无用的代码
+            unused: true,
+            // 删掉 debugger
+            drop_debugger: true, // eslint-disable-line
+            // 移除 console
+            drop_console: true, // eslint-disable-line
+            // 移除无用的代码
+            dead_code: true // eslint-disable-line
+          }
+        }
       })
     ]
   },
