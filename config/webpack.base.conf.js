@@ -1,6 +1,11 @@
+/**
+ * webpack 公共配置
+ * 包括 entry、loader 和 plugin 相关配置
+ */
 const path = require('path');
 const webpack = require('webpack');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const PrerenderSPAPlugin = require('prerender-spa-plugin');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 
 // 不同命名空间下静态资源的路径前缀
@@ -18,28 +23,11 @@ const assetPrefixForNamespace = (namespace) => {
 };
 const namespace = process.env.NAMESPACE;  // 命名空间
 __webpack_public_path__ = `${assetPrefixForNamespace(namespace)}/`;  // CDN主机根据不同的环境来定义__webpack_public_path__
+// 是否是生产环境
+const isProduction = process.env.NODE_ENV === 'production';
 
 module.exports = {
   entry: './src/index.js',  // 项目入口文件，支持字符串、对象、数组
-  output: {  // 项目的输出文件
-    /**
-     * hash: 修改任何文件都会改变hash
-     * chunkhash: entry 的模块文件不变hash不变
-     * contenthash: 把 CSS 从 JS 中使用mini-css-extract-plugin 或 extract-text-webpack-plugin抽离出来并使用 contenthash
-     */
-    path: path.resolve(__dirname, '../dist'),
-    filename: '[name].js',
-    chunkFilename: '[name].js',
-    publicPath: '/',  // 指定在浏览器中被引用的 URL 地址，用来作为src或者link指向该文件, 用于确定 bundle 的来源
-    /**
-     * var: 只能以 <script> 标签的形式引入
-     * commonjs: 只能按照 commonjs 的规范引入
-     * amd: 只能按照 amd 规范引入
-     * umd: 可以用<script>、commonjs、amd 引入
-     */
-    // libraryTarget: 'amd',  // 指定库打包出来的规范
-    // target:   // 两种类型：string 和 function。
-  },
   // 帮助webpack快速遍历模块依赖
   resolve: {
     // 省略引入的模块扩展名
@@ -149,6 +137,11 @@ module.exports = {
     }),
     // 将你定义过的其它规则复制并应用到 .vue 文件里相应语言的块
     // 例如，如果你有一条匹配 /\.js$/ 的规则，那么它会应用到 .vue 文件里的 <script> 块
-    new VueLoaderPlugin()
+    new VueLoaderPlugin(),
+    // 预渲染某些页面，有更好的SEO
+    // new PrerenderSPAPlugin({
+    //   staticDir: path.join(__dirname, 'dist'),
+    //   routes: ['/', '/about']
+    // })
   ]
 };

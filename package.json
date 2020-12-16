@@ -4,8 +4,8 @@
   "description": "This is a webpack template for Single Page Application.",
   "main": "index.js",
   "scripts": {
-    "dev": "webpack --config config/webpack.dev.conf.js --inline --progress",
-    "build": "rm -rf dist && webpack --config config/webpack.prod.conf.js --progress --color --profile",
+    "dev": "webpack-dev-server --config config/webpack.dev.conf.js --inline --progress",
+    "build": "rm -rf dist && cross-env NODE_ENV=production webpack --config config/webpack.prod.conf.js --progress --color --profile",
     "lint": "eslint --fix"
   },
   "author": "yet",
@@ -37,6 +37,8 @@
     "postcss-nested": "^5.0.1",
     "postcss-preset-env": "^6.7.0",
     "postcss-sprites": "^4.2.1",
+    "prerender-spa-plugin": "^3.4.0",
+    "puppeteer": "^1.20.0",
     "sass": "^1.29.0",
     "sass-loader": "^10.1.0",
     "style-loader": "^2.0.0",

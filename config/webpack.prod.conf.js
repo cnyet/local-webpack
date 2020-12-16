@@ -1,3 +1,8 @@
+/**
+ * webpack 生产环境配置
+ * 包括 splitChunks、压缩资源、CDN 路径配置（在output配置）等相关配置
+ * terser-webpack-plugin配置中强制去除多余信息
+ */
 const webpack = require("webpack");
 const { merge } = require('webpack-merge')
 const baseWebpackConfig = require('./webpack.base.conf')
@@ -11,9 +16,24 @@ const prodWebpackConfig = {
   mode: 'production',
   // 编译后的代码映射回原始源代码
   devtool: 'none',
-  output: {
+  output: {  // 项目的输出文件
+    /**
+     * hash: 修改任何文件都会改变hash
+     * chunkhash: entry 的模块文件不变hash不变
+     * contenthash: 把 CSS 从 JS 中使用mini-css-extract-plugin 或 extract-text-webpack-plugin抽离出来并使用 contenthash
+     */
+    path: path.resolve(__dirname, '../dist'),
     filename: 'js/[name].[chunkhash:7].js',
-    chunkFilename: 'js/[name].[chunkhash:7].js'
+    chunkFilename: 'js/[name].[chunkhash:7].js',
+    publicPath: '/',  // 指定在浏览器中被引用的 URL 地址，用来作为src或者link指向该文件, 用于确定 bundle 的来源
+    /**
+     * var: 只能以 <script> 标签的形式引入
+     * commonjs: 只能按照 commonjs 的规范引入
+     * amd: 只能按照 amd 规范引入
+     * umd: 可以用<script>、commonjs、amd 引入
+     */
+    // libraryTarget: 'amd',  // 指定库打包出来的规范
+    // target:   // 两种类型：string 和 function。
   },
   // webpack4 以上版本模块优化设置
   optimization: {

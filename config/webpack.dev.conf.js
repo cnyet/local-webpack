@@ -1,3 +1,7 @@
+/**
+ * webpack 开发环境配置
+ * 包括 devServer、API mock 等相关配置
+ */
 const webpack = require("webpack");
 const { merge } = require('webpack-merge')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
