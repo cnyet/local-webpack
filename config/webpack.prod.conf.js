@@ -85,6 +85,7 @@ const prodWebpackConfig = {
     new HtmlWebpackPlugin({
       template: 'index.html',
       inject: true,  //js插入的位置，true/'head'/'body'/false
+      favicon: path.join(__dirname, '../favicon.ico'),
       minify: {
         removeComments: true,  //移除HTML中的注释
         collapseWhitespace: true,  //删除空白符与换行符

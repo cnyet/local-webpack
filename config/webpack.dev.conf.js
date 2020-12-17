@@ -29,6 +29,7 @@ const devWebpackConfig = {
     new HtmlWebpackPlugin({
       filename: 'index.html',
       template: 'index.html',
+      favicon: path.join(__dirname, '../favicon.ico'),
       inject: true
     }),
     //启用模块热替换
