@@ -9,7 +9,6 @@ const baseWebpackConfig = require('./webpack.base.conf')
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin');
 const TerserPlugin = require('terser-webpack-plugin');
-const fs = require("fs"); //文件系统
 const path = require("path"); //引入nodejs再带的path模块，用于处理目录的对象
 
 const prodWebpackConfig = {
