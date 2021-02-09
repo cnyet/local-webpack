@@ -1,24 +1,36 @@
+/**
+ * webpack 打包基本配置
+ * 
+ */
 const path = require('path');
 const VueLoaderPlugin = require('vue-loader/lib/plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  mode: 'development',
-  // entry: path.resolve(__dirname, './src/index.js'),
+  // 开发还是生产模式，默认是 production
+  mode: process.env.NODE_ENV,
+  // 显示性能提示，当打包资源体积较大时，显示一条警告
+  performance: {
+    hints: 'warning'
+  },
+  // 入口文件列表
   entry: {
     index: './src/index.js',
     chunk: './src/chunk.js'
   },
+  // 输出文件配置
   output: {
-    path: path.resolve(__dirname, 'dist'),
-    filename: '[name].bundle.js',
-    publicPath: '/'
+    path: path.resolve(__dirname, 'dist'), // 文件输出的目录
+    filename: '[name].bundle.js', // 每个输出 bundle 的名称
+    publicPath: '/' // 运行时或loader 载入时，引入资源URL的前缀
   },
+  // webpack-dev-server 创建的一个本地服务配置
   devServer: {
-    stats: 'minimal',
-    contentBase: __dirname
+    stats: 'minimal',  // 在发生错误或新的编译开始时输出捆绑软件信息
+    contentBase: __dirname // 
   },
+  // 处理不同的模块
   module: {
     rules: [
       {
@@ -88,6 +100,7 @@ module.exports = {
       }
     ]
   },
+  // 引入插件，扩展 webpack 功能
   plugins: [
     new VueLoaderPlugin(),
     new MiniCssExtractPlugin({

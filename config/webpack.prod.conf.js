@@ -23,7 +23,7 @@ const prodWebpackConfig = {
      */
     path: path.resolve(__dirname, '../dist'),
     filename: 'js/[name].[chunkhash:7].js',
-    chunkFilename: 'js/[name].[chunkhash:7].js',
+    chunkFilename: 'js/[name].[chunkhash:7].js',  // 非入口chunk文件名，在runtime时根据chunk发送的请求生成
     publicPath: '/',  // 指定在浏览器中被引用的 URL 地址，用来作为src或者link指向该文件, 用于确定 bundle 的来源
     /**
      * var: 只能以 <script> 标签的形式引入
